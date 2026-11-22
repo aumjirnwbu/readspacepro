@@ -45,7 +45,7 @@ export const DetailPage: React.FC = () => {
       return;
     }
     try {
-      await unlockBook(comic.id, pointCost, comic.title);
+      await unlockBook(comic.id);
       showToast('ปลดล็อกหนังสือเรียบร้อยแล้ว');
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'แต้มสะสมไม่เพียงพอ');

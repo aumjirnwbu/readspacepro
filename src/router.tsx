@@ -1,24 +1,12 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
-import { Navbar } from './components/Navbar';
-import { Footer } from './components/Footer';
+import { createBrowserRouter } from 'react-router-dom';
+import { RootLayout } from './components/RootLayout';
 import { HomePage } from './pages/HomePage';
 import { DetailPage } from './pages/DetailPage';
 import { CollectionPage } from './pages/CollectionPage';
 import { PointsPage } from './pages/PointsPage';
 import { AboutPage } from './pages/AboutPage';
 import { AuthPage } from './pages/AuthPage';
-
-const RootLayout = () => {
-  return (
-    <div className="min-h-screen flex flex-col bg-base-200/50">
-      <Navbar />
-      <main className="grow">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
-  );
-};
+import { ManageComicsPage } from './pages/ManageComicsPage';
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +19,7 @@ export const router = createBrowserRouter([
       { path: 'points', element: <PointsPage /> },
       { path: 'about', element: <AboutPage /> },
       { path: 'login', element: <AuthPage /> },
+      { path: 'admin/comics', element: <ManageComicsPage /> },
     ],
   },
 ]);

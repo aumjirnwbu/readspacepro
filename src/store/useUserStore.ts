@@ -18,9 +18,10 @@ export interface Transaction {
   date: string;
 }
 
-interface UserStore extends Omit<UserState, 'id' | 'email'> {
+interface UserStore extends Omit<UserState, 'id' | 'email' | 'role'> {
   userId: number | null;
   email: string | null;
+  role: UserState['role'] | null;
   loginUser: (email: string, password: string) => Promise<void>;
   registerUser: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -30,12 +31,13 @@ interface UserStore extends Omit<UserState, 'id' | 'email'> {
   isInCollection: (comicId: number) => boolean;
   toggleCollection: (comicId: number) => Promise<boolean>;
   isUnlocked: (comicId: number) => boolean;
-  unlockBook: (comicId: number, cost: number, bookTitle?: string) => Promise<boolean>;
+  unlockBook: (comicId: number) => Promise<boolean>;
 }
 
 const applyUserState = (state: UserState) => ({
   userId: state.id,
   email: state.email,
+  role: state.role,
   points: state.points,
   collection: state.collection,
   unlockedBooks: state.unlockedBooks,
@@ -47,6 +49,7 @@ export const useUserStore = create<UserStore>()(
     (set, get) => ({
       userId: null,
       email: null,
+      role: null,
       points: 0,
       collection: [],
       unlockedBooks: [],
@@ -65,6 +68,7 @@ export const useUserStore = create<UserStore>()(
       logout: () => set({
         userId: null,
         email: null,
+        role: null,
         points: 0,
         collection: [],
         unlockedBooks: [],
@@ -97,17 +101,13 @@ export const useUserStore = create<UserStore>()(
 
       isUnlocked: (comicId) => get().unlockedBooks.includes(comicId),
 
-      unlockBook: async (comicId, _cost, _bookTitle) => {
+      unlockBook: async (comicId) => {
         const userId = get().userId;
         if (!userId) throw new Error('กรุณาเข้าสู่ระบบก่อน');
         if (get().unlockedBooks.includes(comicId)) return true;
 
-        try {
-          set(applyUserState(await unlockComic(userId, comicId)));
-          return true;
-        } catch (error) {
-          throw error;
-        }
+        set(applyUserState(await unlockComic(userId, comicId)));
+        return true;
       },
     }),
     { name: 'manga-user-storage' },

@@ -60,10 +60,11 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: 'demo@example.com' },
-    update: {},
+    update: { role: 'ADMIN' },
     create: {
       email: 'demo@example.com',
       password: '1234',
+      role: 'ADMIN',
       points: 1000,
       transactions: {
         create: { type: 'topup', title: 'แต้มเริ่มต้น', amount: 1000 },

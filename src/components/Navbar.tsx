@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
 
 export const Navbar: React.FC = () => {
-  const { points, userId, email, logout } = useUserStore();
+  const { points, userId, email, role, logout } = useUserStore();
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -40,6 +40,14 @@ export const Navbar: React.FC = () => {
           >
             ผู้พัฒนา
           </Link>
+          {role === 'ADMIN' && (
+            <Link
+              to="/admin/comics"
+              className={isActive('/admin/comics') ? 'text-blue-400 border-b-2 border-blue-400 pb-1 font-semibold' : 'text-slate-300 hover:text-white transition-colors'}
+            >
+              จัดการหนังสือ
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-2">

@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev:all": "concurrently -k -n API,WEB -c blue,green \"npm run dev:server\" \"npm run dev\"",
     "dev:server": "tsx watch server/index.ts",
-    "build": "tsc -b && vite build",
+    "build": "prisma generate && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "prisma:generate": "prisma generate",
