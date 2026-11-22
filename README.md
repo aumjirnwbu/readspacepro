@@ -84,7 +84,7 @@ npm run dev:all
 
 ## Deploy บน Vercel
 
-โปรเจกต์เตรียม `vercel.json` สำหรับ Vite SPA, Express API Function และไฟล์รูปปกไว้แล้ว:
+โปรเจกต์เตรียม `vercel.json` สำหรับ Vite SPA และ Express API Functions ไว้แล้ว โดยแยก entry point ตาม endpoint เพื่อให้ Vercel รองรับทั้ง API path แบบซ้อน เช่น `/api/auth/login` และ `/api/comics/:id`:
 
 1. Push โปรเจกต์ขึ้น GitHub แล้วเลือก **Add New → Project** ใน Vercel เพื่อ Import repository
 2. ใช้ Root Directory เป็นโฟลเดอร์โปรเจกต์; Framework Preset เป็น Vite; Build Command เป็น `npm run build`; Output Directory เป็น `dist`
@@ -92,7 +92,7 @@ npm run dev:all
    - `DATABASE_URL`: Supabase Transaction Pooler URL (port `6543`, ตั้ง `pgbouncer=true`)
    - `DIRECT_URL`: Supabase Direct connection URL (port `5432`) สำหรับ Prisma Migrate
    - `API_PUBLIC_URL` (ไม่บังคับ): URL หลักของ Vercel deployment หากต้องการกำหนดโดเมนรูปปกเอง; หากไม่ตั้ง โค้ดจะใช้ `VERCEL_URL`
-4. Deploy แล้วตรวจ `https://<โดเมนของเว็บ>/api/health`
+4. Deploy แล้วตรวจ `https://<โดเมนของเว็บ>/api/health`, `/api/comics` และลองเข้าสู่ระบบ เพื่อยืนยันว่า API ที่มี path ซ้อนทำงานด้วย
 5. ถ้าเป็น Supabase โปรเจกต์เดิมที่รัน migration แล้ว ไม่ต้อง seed ซ้ำ; บัญชีสาธิต `demo@example.com` / `1234` ใช้ได้
 
 โค้ดจะใช้ `/api` บน Production โดยอัตโนมัติ และ Vercel จะส่ง API ไปที่ Express Function ส่วนการรันในเครื่องยังใช้ `http://localhost:3001/api`
