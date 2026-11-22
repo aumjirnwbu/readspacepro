@@ -1,67 +1,100 @@
-# รายงานตรวจสอบ Mini Project2 Full-Stack
+# รายงานตรวจสอบ Mini Project2: Full-Stack CRUD
 
-วันที่ตรวจ: 22 พฤศจิกายน 2569  
-ขอบเขต: ตรวจซอร์สโค้ดและทดสอบระบบที่กำลังรันอยู่ รวมถึงเตรียมการตั้งค่าสำหรับ Vercel
+วันที่ตรวจ: 22 พฤศจิกายน 2569
+ขอบเขต: ตรวจข้อกำหนดจากซอร์สโค้ด ทดสอบ API บน Production และตรวจคำถามเรื่อง Supabase Free Plan
+หมายเหตุ: รอบนี้แก้เฉพาะเอกสารรายงานนี้ ไม่ได้แก้โค้ดหรือเปลี่ยนข้อมูลในฐานข้อมูล
 
 ## สรุปผล
 
-ระบบมี Backend REST API, Prisma ORM และ PostgreSQL บน Supabase เชื่อมต่อกับ Frontend React/Vite/TypeScript แล้ว การเชื่อมต่อฐานข้อมูลและ CRUD API ผ่านการทดสอบจริง พร้อมเพิ่ม Vercel Function configuration สำหรับ Express API และ Vite SPA
+**ผ่านข้อกำหนดหลักของงาน Full-Stack CRUD**: Frontend React/Vite/TypeScript เชื่อม Express REST API ผ่าน TanStack Query และ Zustand; Backend ใช้ Prisma กับ PostgreSQL บน Supabase; มีระบบผู้ใช้/คอลเลกชันส่วนตัว และ CRUD หนังสือทั้ง API และหน้าเว็บ
 
-**ผลรวม: ผ่านในระดับโค้ดและทดสอบในเครื่อง** — ยังไม่ได้เผยแพร่ Deployment ขึ้น Vercel จริง เพราะต้อง Import repository และตั้งค่า Environment Variables ในบัญชี Vercel
+ทดสอบ Production `https://readspacepro.vercel.app` เมื่อ 22 พฤศจิกายน 2569 แล้ว API อ่านข้อมูลจากฐานข้อมูลได้ 32 รายการ รายละเอียดหนังสือ สถานะผู้ใช้ การล็อกอินบัญชีสาธิต และไฟล์รูปปกตอบสำเร็จ จึงยืนยันได้ว่า Supabase **เชื่อมต่อและใช้งานได้ในเวลาที่ตรวจ** ไม่ใช่เพียง `/api/health` ที่ตอบสถานะจากตัวแอป
 
 ## ตรวจตามข้อกำหนด
 
-| ข้อกำหนด | ผล | รายละเอียด |
+| ข้อกำหนด | ผล | หลักฐาน/รายละเอียด |
 |---|---|---|
-| React + Vite + TypeScript | ผ่าน | Frontend ใช้ React, Vite และ TypeScript |
-| TanStack Query และ Zustand | ผ่าน | TanStack Query ใช้ดึงรายการ/รายละเอียดหนังสือ ส่วน Zustand เก็บสถานะผู้ใช้ คอลเลกชัน แต้ม และธุรกรรม |
-| Backend RESTful API | ผ่าน | Express ให้บริการ API สำหรับหนังสือ ผู้ใช้ การเข้าสู่ระบบ คอลเลกชัน และแต้ม |
-| Prisma ORM และฐานข้อมูล | ผ่าน | Prisma เชื่อม PostgreSQL บน Supabase โดยมีโมเดล `User`, `Comic`, `Collection`, `Unlocked` และ `Transaction` |
-| CRUD หนังสือ | ผ่านที่ API และ UI | หน้า `/admin/comics` รองรับเพิ่ม แก้ไข และลบ และเชื่อม `POST /api/comics`, `PUT /api/comics/:id`, `DELETE /api/comics/:id` |
-| Personal Collection และการระบุตัวตน | ผ่าน | สมัคร/เข้าสู่ระบบด้วยอีเมลและรหัสผ่าน บันทึก/นำหนังสือออกจากคอลเลกชัน ปลดล็อกหนังสือ และจัดเก็บธุรกรรมในฐานข้อมูล |
-| สิทธิ์แอดมินสำหรับ CRUD | ผ่านสำหรับต้นแบบ | บัญชี `demo@example.com` มีบทบาท `ADMIN`; Backend ตรวจ Basic Authorization และบทบาทจากฐานข้อมูลทุกครั้งที่เพิ่ม แก้ไข หรือลบ |
-| ไม่ใช้ API ภายนอก | ผ่าน | เส้นทางดึงข้อมูลในแอปเรียก Backend ของโปรเจกต์ ข้อมูลหนังสือตัวอย่างกำหนดใน [seed.ts](./prisma/seed.ts) ซึ่งโจทย์อนุญาต |
+| React + Vite + TypeScript | ผ่าน | Frontend ใช้ React/Vite และไฟล์ TypeScript |
+| TanStack Query | ผ่าน | หน้ารายการ/รายละเอียดและหน้าจัดการใช้ `useQuery`/`useMutation` เรียก API |
+| Zustand | ผ่าน | Store จัดการผู้ใช้ แต้ม คอลเลกชัน หนังสือที่ปลดล็อก และประวัติธุรกรรม พร้อม persist สถานะในเครื่อง |
+| Backend RESTful API | ผ่าน | Express มี endpoint หนังสือ ผู้ใช้ ล็อกอิน สมัครสมาชิก คอลเลกชัน เติมแต้ม และปลดล็อก |
+| Prisma ORM + ฐานข้อมูลที่จัดทำเอง | ผ่าน | Prisma schema/migrations กำหนด PostgreSQL บน Supabase และตารางของโปรเจกต์ |
+| CRUD หนังสือ | ผ่าน | API มีอ่านรายการ/รายละเอียด เพิ่ม แก้ไข ลบ; หน้า `/admin/comics` มีฟอร์มจัดการและเรียก API |
+| Personal Collection | ผ่านตามขอบเขตต้นแบบ | สมัคร/ล็อกอินด้วยอีเมลและรหัสผ่าน; เพิ่ม/นำหนังสือออกจากคอลเลกชัน และเก็บสถานะผู้ใช้ในฐานข้อมูล |
+| ไม่ใช้ API ภายนอก | ผ่านจากการตรวจซอร์ส | Frontend เรียก API ของโปรเจกต์; ไม่พบการเรียก API หนังสือภายนอก ข้อมูลตัวอย่างสร้างจาก `prisma/seed.ts` |
+| CustomExtended Page | ไม่ได้ทำ | เป็นส่วนที่โจทย์ระบุว่าไม่บังคับ |
 
+### โครงสร้างและแหล่งอ้างอิงในโปรเจกต์
 
-### แหล่งอ้างอิงในโปรเจกต์
+- Prisma models: `User`, `Comic`, `Collection`, `Unlocked`, `Transaction` ใน [schema.prisma](./prisma/schema.prisma)
+- ข้อมูลตัวอย่าง 32 รายการและบัญชีสาธิตใน [seed.ts](./prisma/seed.ts)
+- REST endpoints และการเชื่อม Prisma ใน [server/app.ts](./server/app.ts)
+- Vercel Function entry points แยกตามเส้นทางในโฟลเดอร์ [api/](./api/)
+- การเรียก API จาก Frontend ใน [comicsApi.ts](./src/api/comicsApi.ts)
+- TanStack Query ใน [HomePage.tsx](./src/pages/HomePage.tsx) และ [ManageComicsPage.tsx](./src/pages/ManageComicsPage.tsx)
+- Zustand ใน [useUserStore.ts](./src/store/useUserStore.ts)
+- Routing หน้าจัดการหนังสือใน [router.tsx](./src/router.tsx)
 
-- API และการเชื่อม Prisma: [server/index.ts](./server/index.ts)
-- Express application ที่ใช้ทั้ง Local และ Vercel: [server/app.ts](./server/app.ts)
-- Vercel Function entry point: [[...path].ts](./api/[...path].ts)
-- Vercel configuration: [vercel.json](./vercel.json)
-- โครงสร้างฐานข้อมูล: [schema.prisma](./prisma/schema.prisma)
-- การเชื่อม Frontend กับ API: [comicsApi.ts](./src/api/comicsApi.ts)
-- การใช้ TanStack Query: [HomePage.tsx](./src/pages/HomePage.tsx), [DetailPage.tsx](./src/pages/DetailPage.tsx)
-- Layout และ routing: [RootLayout.tsx](./src/components/RootLayout.tsx), [router.tsx](./src/router.tsx)
-- หน้าจัดการ CRUD: [ManageComicsPage.tsx](./src/pages/ManageComicsPage.tsx)
-- สถานะผู้ใช้และการเรียก API: [useUserStore.ts](./src/store/useUserStore.ts)
-- ข้อมูลตัวอย่าง: [seed.ts](./prisma/seed.ts)
+### REST API ที่มีใน Backend
 
-## ผลการทดสอบ
+| Method | Endpoint | หน้าที่ |
+|---|---|---|
+| `GET` | `/api/health` | ตรวจสถานะ API |
+| `GET` | `/api/comics` | อ่านรายการหนังสือ |
+| `GET` | `/api/comics/:id` | อ่านรายละเอียดหนังสือ |
+| `POST` | `/api/comics` | เพิ่มหนังสือ (ต้องเป็น ADMIN) |
+| `PUT` | `/api/comics/:id` | แก้ไขหนังสือ (ต้องเป็น ADMIN) |
+| `DELETE` | `/api/comics/:id` | ลบหนังสือ (ต้องเป็น ADMIN) |
+| `POST` | `/api/auth/register` | สมัครสมาชิก |
+| `POST` | `/api/auth/login` | เข้าสู่ระบบ |
+| `GET` | `/api/users/:id/state` | อ่านสถานะผู้ใช้ |
+| `POST` / `DELETE` | `/api/users/:id/collection[/:comicId]` | เพิ่ม/นำหนังสือออกจากคอลเลกชัน |
+| `POST` | `/api/users/:id/topup` | เติมแต้ม |
+| `POST` | `/api/users/:id/unlock` | ใช้แต้มปลดล็อกหนังสือ |
+
+## ผลทดสอบ Production
+
+ทดสอบกับ `https://readspacepro.vercel.app`:
 
 | การทดสอบ | ผล |
 |---|---|
-| สถานะ API (`GET /api/health`) | ผ่าน — ตอบกลับ `ok: true` |
-| อ่านรายการหนังสือจาก Supabase (`GET /api/comics`) | ผ่าน — พบ 32 รายการ |
-| สถานะ Prisma migration | ผ่าน — ฐานข้อมูลเป็นปัจจุบัน |
-| CRUD หนังสือบน Supabase | ผ่าน — ทดสอบ `POST`, `GET`, `PUT`, `DELETE`; ลบรายการทดสอบออกแล้ว |
-| หน้า `/admin/comics` | ผ่าน — หน้าตอบ HTTP 200 และ CRUD เชื่อม API |
-| ตรวจสิทธิ์ CRUD | ผ่าน — ไม่มีข้อมูลรับรองได้ 401, บัญชี USER ได้ 403, บัญชี ADMIN เพิ่ม/ลบได้ |
-| Login บัญชีทดลอง | ผ่าน — `demo@example.com` |
-| โหลดรูปปกจาก Backend | ผ่าน — ได้ HTTP 200 |
-| Production build (`npm run build`) | ผ่าน |
-| Lint (`npm run lint`) | ผ่าน — ไม่พบข้อผิดพลาด |
-| Vercel configuration | ผ่านการตรวจ JSON; ตั้งค่า Vite SPA, Express API Function และรวมไฟล์รูปปก |
-| Vercel deployment จริง | ยังไม่ได้ทดสอบ — ต้อง Import repository และกำหนด Environment Variables ในบัญชี Vercel |
+| `GET /api/health` | ผ่าน — HTTP 200, `{"ok":true}` |
+| `GET /api/comics` | ผ่าน — HTTP 200, อ่านได้ 32 รายการจากฐานข้อมูล |
+| `GET /api/comics/1001` | ผ่าน — HTTP 200, ได้รายละเอียดหนังสือ |
+| `GET /api/users/1/state` | ผ่าน — HTTP 200, ได้สถานะผู้ใช้และบทบาท ADMIN |
+| `POST /api/auth/login` บัญชีสาธิต | ผ่าน — HTTP 200 |
+| โหลดรูปปกจาก `/api/uploads/covers/...` | ผ่าน — HTTP 200 |
 
-## Supabase และการพักโปรเจกต์
+ผล `GET /api/comics` และการล็อกอินเป็นหลักฐานว่ามีการอ่านฐานข้อมูลจริง ส่วน `/api/health` เพียงอย่างเดียวไม่ยืนยันการเชื่อมต่อฐานข้อมูล
 
-ขณะตรวจ API และ Prisma เชื่อมต่อ Supabase และตอบสนองได้ จึงยืนยันได้ว่าโปรเจกต์ **Active ณ เวลาที่ตรวจ** แต่รายงานนี้ไม่ได้เข้าถึงหน้า Dashboard หรือการตั้งค่าแผนของ Supabase จึงรับประกันไม่ได้ว่าจะไม่ถูกพักอัตโนมัติก่อนวันส่งคะแนน
+การทดสอบ Production รอบนี้ไม่ได้สร้าง/แก้ไข/ลบข้อมูลจริง เพื่อไม่ให้เปลี่ยนข้อมูลบนเว็บที่ใช้งานอยู่; ตรวจความครบของ CRUD จากเส้นทางใน Backend และการเชื่อม mutation ในหน้า `/admin/comics` ส่วนรายงานการทดสอบก่อนหน้านี้บันทึกผล CRUD และการตรวจสิทธิ์ไว้แล้ว
 
-หากวันนำเสนอหรือวันตรวจคะแนน API เชื่อมต่อไม่ได้ ให้ตรวจสถานะโปรเจกต์ใน Supabase Dashboard และกด Resume/Restore หากถูกพัก ระบบในโค้ดไม่สามารถรับประกันหรือสั่งยกเลิกการพักของ Supabase ได้
+## ตรวจโค้ดและ Build
 
-## ข้อจำกัดที่ควรทราบ
+| คำสั่ง/การตรวจ | ผล |
+|---|---|
+| `npm run lint` | ผ่าน |
+| `npx tsc -b` | ผ่าน |
+| `npx vite build` | ผ่าน |
+| Type-check API Functions และ Express app | ผ่าน |
+| `npm run build` แบบเต็ม | ติดขัดที่ `prisma generate`: Windows แจ้ง `EPERM` ขณะแทนที่ `query_engine-windows.dll.node`; จึงไม่ถือว่าคำสั่ง build แบบเต็มผ่านในรอบนี้ |
+| Automated test script | ไม่มีสคริปต์ `test` ใน `package.json` |
 
-1. การยืนยันแอดมินใช้ Basic Authorization และรหัสผ่านแบบข้อความธรรมดาตามที่กำหนดสำหรับต้นแบบ ไม่มี token/session/hash จึงไม่ควรเปิดระบบนี้แบบสาธารณะหรือใช้กับข้อมูลจริง บัญชีสาธิตคือ `demo@example.com` / `1234`
-2. การ deploy ขึ้น Vercel ต้องเชื่อม GitHub และตั้ง `DATABASE_URL`, `DIRECT_URL` ใน Project Settings; ควรตรวจ `/api/health`, API และรูปปกหลัง deploy
-3. รหัสผ่านเก็บแบบไม่เข้ารหัสตามรูปแบบง่ายที่โจทย์อนุญาตสำหรับงานนี้ ไม่ควรใช้แนวทางนี้กับระบบจริง
+## Supabase: สถานะ Active และการพักอัตโนมัติ
+
+- จากการทดสอบ Production ด้านบน ฐานข้อมูลตอบสนองและมีข้อมูล 32 รายการ **ณ เวลาตรวจ** จึงใช้งานได้ในขณะนี้
+- ยังไม่ได้เข้าถึง Supabase Dashboard จึงตรวจสถานะแผนและปุ่มสถานะของโปรเจกต์โดยตรงไม่ได้
+- เอกสาร Supabase ระบุว่าโปรเจกต์ Free ที่มีกิจกรรมน้อยในช่วง 7 วัน **อาจถูกพัก (pause)** เพื่อประหยัดทรัพยากร และสามารถกู้คืน/Resume จาก Supabase Dashboard ได้; Pro ป้องกันการพักเนื่องจากไม่มีความเคลื่อนไหวตามที่เอกสารระบุ
+- ถ้าถูกพัก ให้เข้า Supabase Dashboard แล้ว Resume/Restore โปรเจกต์ จากนั้นทดสอบ `/api/comics` และล็อกอินอีกครั้งก่อนผู้ตรวจให้คะแนน การ Resume ไม่ต้องแก้โค้ด แต่ไม่สามารถรับประกันได้ว่า Free Plan จะ Active ตลอดช่วงที่ไม่มีการใช้งาน
+- อ้างอิง: [Supabase Production Checklist — Availability](https://supabase.com/docs/guides/deployment/going-into-prod#free-plan)
+
+## ข้อจำกัดและสิ่งที่ควรระวัง
+
+1. บัญชีสาธิต `demo@example.com` / `1234` เป็น ADMIN ที่ทราบข้อมูลเข้าสู่ระบบได้ทั่วไป; ใช้เพื่อสาธิตงานเท่านั้น
+2. รหัสผ่านเก็บแบบข้อความธรรมดา และการยืนยันแอดมินใช้ Basic Authorization ตามขอบเขตต้นแบบ ไม่เหมาะกับข้อมูลจริงหรือเว็บสาธารณะ
+3. API คอลเลกชัน/สถานะผู้ใช้อ้างอิง `userId` จาก URL และไม่มี session/token สำหรับผูกตัวตนใน Backend จึงยังไม่ใช่การแยกข้อมูลผู้ใช้ที่ปลอดภัยสำหรับระบบจริง
+4. ก่อนอัปเดตรายงานนี้ `.env` ถูก track ใน Git; รอบนี้นำออกจาก Git index แล้วและเก็บไฟล์ไว้ในเครื่อง โดยไม่แสดงค่าภายใน หากเคย push repository นี้ขึ้น GitHub หรือแหล่งสาธารณะ การนำไฟล์ออกตอนนี้ไม่ลบข้อมูลจาก Git history: ให้เปลี่ยนรหัสผ่านฐานข้อมูล Supabase และอัปเดต `DATABASE_URL`/`DIRECT_URL` ใน Vercel; อย่า commit `.env`
+
+## ข้อสรุป
+
+โดยรวมโปรเจกต์ตรงกับข้อกำหนดหลักและทดสอบ Production ได้ว่ารายการ/รายละเอียดหนังสือ รูปปก และล็อกอินเชื่อมกับฐานข้อมูลได้ อย่างไรก็ตาม Supabase Free อาจพักเมื่อกิจกรรมน้อย จึงควรตรวจและ Resume ก่อนวันตรวจคะแนน และควรพิจารณาคำเตือนเรื่อง `.env` กับบัญชีสาธิตก่อนเผยแพร่ repository

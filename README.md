@@ -127,7 +127,3 @@ npm run lint
 ```bash
 npm run build
 ```
-s
-
-## p
-cs319miniproj2
