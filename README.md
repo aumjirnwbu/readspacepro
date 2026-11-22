@@ -12,8 +12,6 @@
 - **Database:** PostgreSQL บน Supabase
 - **Deployment:** Vercel
 
-โปรเจกต์ไม่ดึงรายการหนังสือจาก API ภายนอก ข้อมูลตัวอย่างสร้างจาก `prisma/seed.ts` ตามที่โจทย์อนุญาต
-
 ## ความสามารถ
 
 - ดูรายการ ค้นหา และดูรายละเอียดหนังสือ
@@ -23,7 +21,6 @@
 - จัดการหนังสือแบบ CRUD ผ่านหน้า `/admin/comics`
 - เก็บข้อมูลหนังสือ ผู้ใช้ คอลเลกชัน การปลดล็อก และธุรกรรมในฐานข้อมูล
 
-หน้า `CustomExtended` ไม่ได้ทำ เนื่องจากโจทย์ระบุว่าเป็นหน้าพิเศษที่ทำหรือไม่ทำก็ได้
 
 ## ภาพรวมการทำงาน
 
@@ -124,41 +121,6 @@ npm run dev
 
 ผู้ใช้ที่สมัครใหม่จะได้บทบาท `USER` บัญชีสาธิตใช้เข้าสู่หน้า `/admin/comics` เพื่อจัดการหนังสือ
 
-## Deploy บน Vercel
-
-1. Import repository ใน Vercel และตั้ง Root Directory เป็นโฟลเดอร์โปรเจกต์
-2. ใช้ Framework Preset `Vite`, Build Command `npm run build`, Output Directory `dist`
-3. เพิ่ม Environment Variables ใน Vercel:
-   - `DATABASE_URL`: Supabase Transaction Pooler URL
-   - `DIRECT_URL`: Supabase Direct connection หรือ Session Pooler สำหรับ migrations
-   - `API_PUBLIC_URL` (ไม่บังคับ): URL หลักของเว็บ หากต้องการกำหนด URL รูปปกเอง
-4. ตรวจให้แน่ใจว่า migrations ถูกใช้กับฐานข้อมูลก่อนเปิดเว็บ
-5. Deploy แล้วตรวจ:
-   - `https://<โดเมน>/api/health` — ตรวจการตอบสนองของ API
-   - `https://<โดเมน>/api/comics` — ตรวจว่าดึงข้อมูลจากฐานข้อมูลได้
-   - ลองล็อกอินและเปิดหน้ารายละเอียดหนังสือ
-
-`/api/health` ยืนยันเฉพาะว่า API ตอบสนอง ควรตรวจ `/api/comics` เพิ่มเพื่อยืนยันการเชื่อมต่อฐานข้อมูล
-
 Production URL ปัจจุบัน: <https://readspacepro.vercel.app>
 
-## Supabase Free Plan อาจ Pause
 
-Supabase อาจพักโปรเจกต์ Free ที่มีกิจกรรมน้อยในช่วง 7 วัน หากหน้าเว็บไม่มีข้อมูลหรือ API ติดต่อฐานข้อมูลไม่ได้ ให้ตรวจสถานะใน Supabase Dashboard และเลือก Resume/Restore จากนั้นทดสอบ `/api/comics` และล็อกอินอีกครั้ง การ Resume ไม่ต้องแก้โค้ด แต่ Free Plan ไม่รับประกันว่าจะ Active ตลอดช่วงไม่มีการใช้งาน
-
-ดูผลตรวจและสถานะล่าสุดเพิ่มเติมได้ที่ [testresult.md](./testresult.md) และใช้สคริปต์นำเสนอจาก [present.md](./present.md)
-
-## คำสั่งตรวจสอบ
-
-```bash
-npm run lint
-npx tsc -b
-npx vite build
-npm run build
-```
-
-`npm run build` รวม Prisma generate, TypeScript และ Vite build หากบน Windows พบ `EPERM` ตอน Prisma แทนที่ `query_engine-windows.dll.node` ให้ตรวจว่ามีโปรเซสพัฒนาเครื่องเดิมเปิดค้างอยู่หรือไม่ แล้วลองใหม่; รายงานผลตรวจล่าสุดระบุข้อผิดพลาดนี้ไว้
-
-## ข้อจำกัดด้านความปลอดภัย
-
-ระบบล็อกอินเป็นต้นแบบสำหรับงานเรียน รหัสผ่านเก็บแบบข้อความธรรมดา และการยืนยันแอดมินใช้ Basic Authorization โดยไม่มี token/session ตามขอบเขตที่กำหนด API สถานะ/คอลเลกชันอ้างอิง `userId` จาก URL ด้วย จึงไม่ควรใช้กับข้อมูลจริงหรือเปิดให้ใช้งานสาธารณะ บัญชี ADMIN สาธิตเป็นข้อมูลที่เปิดเผยได้
